@@ -60,6 +60,7 @@ addEngineSrcDir('T3D/turret');
 addEngineSrcDir('T3D/logickingMechanics');
 addEngineSrcDir('T3D/logickingMechanics/physics');
 addEngineSrcDir('T3D/logickingMechanics/physics/bullet');
+addEngineSrcDir('T3D/logickingMechanics/physics/physx');
 
 global $TORQUE_HIFI_NET;
 global $TORQUE_EXTENDED_MOVE;
