@@ -146,6 +146,9 @@ enum SceneObjectTypes
    /// A volume that asserts forces on player objects.
    /// @see PhysicalZone
    PhysicalZoneObjectType = BIT( 22 ),
+   
+   //.logicking Can't find a logic why its was removed?
+   AIObjectType =                BIT(25),
 
    /// @}
 };

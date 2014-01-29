@@ -72,7 +72,8 @@
 DITTS( F32, gTimeScale, 1.0 );
 DITTS( U32, gTimeAdvance, 0 );
 DITTS( U32, gFrameSkip, 0 );
-
+//.logicking
+bool gFreezeSim = false;
 extern S32 sgBackgroundProcessSleepTime;
 extern S32 sgTimeManagerProcessInterval;
 
@@ -281,6 +282,8 @@ void StandardMainLoop::init()
    Con::addVariable("frameSkip", TypeS32, &ATTS(gFrameSkip), "Sets the number of frames to skip while rendering the scene.\n"
 	   "@ingroup platform");
 
+   //.logicking
+   Con::addVariable("freezeSim", TypeS32, &ATTS(gFreezeSim));
    Con::setVariable( "defaultGame", StringTable->insert("scripts") );
 
    Con::addVariable( "_forceAllMainThread", TypeBool, &ThreadPool::getForceAllMainThread(), "Force all work items to execute on main thread. turns this into a single-threaded system. Primarily useful to find whether malfunctions are caused by parallel execution or not.\n"

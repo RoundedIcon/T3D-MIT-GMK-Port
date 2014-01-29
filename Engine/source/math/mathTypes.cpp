@@ -195,7 +195,9 @@ ImplementConsoleTypeCasters(TypePoint3F, Point3F)
 ConsoleGetType( TypePoint3F )
 {
    Point3F *pt = (Point3F *) dptr;
-   char* returnBuffer = Con::getReturnBuffer(256);
+   //.logicking temporary bugfix
+   //char* returnBuffer = Con::getReturnBuffer(256);
+   char* returnBuffer = Con::getArgBuffer(256);
    dSprintf(returnBuffer, 256, "%g %g %g", pt->x, pt->y, pt->z);
    return returnBuffer;
 }
@@ -815,6 +817,24 @@ DefineConsoleFunction( VectorOrthoBasis, MatrixF, ( AngAxisF aa ),,
    return mat;
 }
 
+//.logicking >>
+ConsoleFunction(VectorRot, const char*, 3, 3, "(Vector3F, float) rotate a vector in 2d")
+{
+	VectorF v(0,0,0);
+	dSscanf(argv[1],"%g %g %g",&v.x,&v.y,&v.z);
+
+	float angle = dAtof(argv[2]);
+
+	float x = 0, y = 0;
+
+	x = v.x * cos(angle) - v.y * sin(angle);            
+	y = v.x * sin(angle) + v.y * cos(angle); 
+
+	char* returnBuffer = Con::getReturnBuffer(256);
+	dSprintf(returnBuffer,256,"%g %g %g", x, y, v.z);
+	return returnBuffer;
+}
+//.logicking <<
 //-----------------------------------------------------------------------------
 
 DefineConsoleFunction( VectorLerp, VectorF, ( VectorF a, VectorF b, F32 t ),,

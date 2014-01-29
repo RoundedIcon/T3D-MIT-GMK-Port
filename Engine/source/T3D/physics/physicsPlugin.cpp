@@ -34,6 +34,9 @@
 #include "T3D/physics/physicsWorld.h"
 #include "core/util/tNamedFactory.h"
 
+//.logicking >>
+#include "T3D/logickingMechanics/physics/physics.h"
+//.logicking <<
 
 PhysicsPlugin* PhysicsPlugin::smSingleton = NULL;
 PhysicsResetSignal PhysicsPlugin::smPhysicsResetSignal;
@@ -135,7 +138,9 @@ ConsoleFunction( physicsInit, bool, 1, 2, "physicsInit( [string library] )" )
    const char *library = "default";
    if ( argc > 1 )
       library = argv[1];
-
+   //.logicking >>
+   Physics::init(library);
+   //.logicking <<
    return PhysicsPlugin::activate( library );
 }
 
@@ -147,13 +152,21 @@ ConsoleFunction( physicsDestroy, void, 1, 1, "physicsDestroy()" )
 
 ConsoleFunction( physicsInitWorld, bool, 2, 2, "physicsInitWorld( String worldName )" )
 {
-   return PHYSICSMGR && PHYSICSMGR->createWorld( String( argv[1] ) );
+    bool res = PHYSICSMGR && PHYSICSMGR->createWorld( String( argv[1] ) );
+   //.logicking >>
+   if (res)
+	   Physics::createPhysics(!dStrcmp(argv[1],"server"), PHYSICSMGR->getWorld(String(argv[1])));
+   //.logicking <<
+   return res;
 }
 
 ConsoleFunction( physicsDestroyWorld, void, 2, 2, "physicsDestroyWorld( String worldName )" )
 {
    if ( PHYSICSMGR )
       PHYSICSMGR->destroyWorld( String( argv[1] ) );
+	  //.logicking >>
+	  Physics::destroyPhysics(!dStrcmp(argv[1],"server"));
+	  //.logicking <<
 }
 
 

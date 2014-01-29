@@ -186,6 +186,14 @@ void AIPlayer::setMoveTolerance( const F32 tolerance )
  */
 void AIPlayer::setMoveDestination( const Point3F &location, bool slowdown )
 {
+	//.logicking >> hack to avoid stopping right after
+	// beginning of the move
+	MatrixF eye;
+	getEyeTransform(&eye);
+	Point3F pos = eye.getPosition();
+	mLastLocation = pos;
+	mLastLocation.z += mMoveTolerance * 2;
+	//.logicking <<
    mMoveDestination = location;
    mMoveState = ModeMove;
    mMoveSlowdown = slowdown;

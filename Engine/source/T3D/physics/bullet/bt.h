@@ -40,5 +40,10 @@
 #include <BulletMultiThreaded/Win32ThreadSupport.h>
 #include <BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuGatheringCollisionTask.h>
 
+//.logicking >>
+#include "BulletSoftBody/btSoftRigidDynamicsWorld.h"
+#include "BulletSoftBody/btSoftBodyRigidBodyCollisionConfiguration.h"
+#include "BulletSoftBody/btSoftBodyHelpers.h"
+//.logicking <<
 
 #endif // _BULLET_H_

@@ -342,8 +342,9 @@ void SceneObject::onDeleteNotify( SimObject *obj )
 {      
    // We are comparing memory addresses so even if obj really is not a 
    // ProcessObject this cast shouldn't break anything.
-   if ( obj == mAfterObject )
-      mAfterObject = NULL;
+   //.logicking - cast to SceneObject first for correct casting to ProcessObject
+   if ( (ProcessObject*)((SceneObject*)obj) == mAfterObject)
+      clearProcessAfter();
 
    if ( obj == mMount.object )
       unmount();

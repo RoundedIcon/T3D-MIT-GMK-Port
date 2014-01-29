@@ -53,7 +53,8 @@ public:
       Forward,
       Backward,
       Stop,
-      StateBits = 3
+	  Pause,  //.logicking
+      StateBits = 4
    };
 
 private:
@@ -64,6 +65,12 @@ private:
       PositionMask   = Parent::NextFreeMask + 1,
       TargetMask     = Parent::NextFreeMask + 2,
       StateMask      = Parent::NextFreeMask + 3,
+	  //.logicking >>
+      LookDirVectorMask      = Parent::NextFreeMask + 4,
+	  AimOffsetMask      = Parent::NextFreeMask + 5,
+	  AimTargetIdMask      = Parent::NextFreeMask + 6,
+	  UseLookDirMatrixMask      = Parent::NextFreeMask + 7,
+      //.logicking <<
       NextFreeMask   = Parent::NextFreeMask << 1
    };
 
@@ -87,6 +94,17 @@ private:
    F32 mTarget;
    bool mTargetSet;
 
+   //.logicking >>
+   Point3F mLookDirVector;
+   MatrixF mLookDirMat;
+   Point3F mAimOffset;
+   SimObjectId mAimTarget;	
+
+   bool mUseLookDirMatrix;
+
+   void calculateAim(Point3F currentPosition);
+   void calculateLookDirMat(Point3F dir);
+   //.logicking <<
    void interpolateMat(F32 pos,MatrixF* mat);
    void advancePosition(S32 ms);
 
@@ -123,6 +141,11 @@ public:
    void setPosition(F32 pos);
    void setTarget(F32 pos);
    void setState(State s);
+
+   //.logicking >>
+   void setLookDir(Point3F dir);
+   void setAim(SimObjectId id, Point3F offset);
+   //.logicking <<
 };
 
 

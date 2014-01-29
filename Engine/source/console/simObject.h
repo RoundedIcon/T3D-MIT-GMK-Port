@@ -413,6 +413,14 @@ class SimObject: public ConsoleObject
       /// We can provide more detail, like object name and id.
       virtual String _getLogMessage(const char* fmt, void* args) const;
    
+      //.logicking >>
+      bool mEnabled;   ///< Flag used to indicate whether object is enabled or not.
+	  // set enable flag value
+      static bool setEnabledValue(void* obj, const char *index, const char* data)          { 
+            static_cast<SimObject*>(obj)->setEnabled(dAtob(data)); 
+            return false; 
+            };
+      //.logicking <<
       DEFINE_CREATE_METHOD
       {
          T* object = new T;
@@ -922,6 +930,12 @@ class SimObject: public ConsoleObject
 
       // EngineObject.
       virtual void destroySelf();
+      //.logicking >>
+      //this function call chunks stored in dynamic fields
+      void signal(const char* fieldName, const char* args = NULL);
+	  virtual void setEnabled( const bool enabled ) { mEnabled = enabled; }
+	  bool isEnabled() const { return mEnabled; }
+      //.logicking <<
 };
 
 

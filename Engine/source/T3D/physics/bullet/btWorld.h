@@ -55,6 +55,9 @@ protected:
    btConstraintSolver *mSolver;
    btDefaultCollisionConfiguration *mCollisionConfiguration;
   	btThreadSupportInterface *mThreadSupportCollision;
+  //.logicking >>
+  btSoftBodyWorldInfo mSoftBodyWorldInfo;
+  //.logicking <<
 
    bool mErrorReport;
 
@@ -84,6 +87,9 @@ public:
    virtual bool isEnabled() const { return mIsEnabled; }
 
    btDynamicsWorld* getDynamicsWorld() const { return mDynamicsWorld; }
+   //.logicking >>
+   btSoftBodyWorldInfo& getSoftBodyWorldInfo() {return mSoftBodyWorldInfo;};
+   //.logicking <<
 
    void tickPhysics( U32 elapsedMs );
    void getPhysicsResults();

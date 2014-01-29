@@ -28,6 +28,9 @@
 #include "T3D/physics/bullet/btCasts.h"
 #include "collision/collision.h"
 
+//.logicking
+#include "T3D/physicalZone.h"
+
 BtPlayer::BtPlayer()
    :  PhysicsPlayer(),
       mWorld( NULL ),
@@ -249,6 +252,20 @@ public:
 		if ( proxy0->m_clientObject == mMe )
 			return false;
 
+		//.logicking >> behavior of Physical Zone as invisible wall
+		btCollisionObject* colObj = (btCollisionObject*)(proxy0->m_clientObject);
+		SceneObject* sceneObj = PhysicsUserData::getObject(colObj->getUserPointer());
+		if (sceneObj && (sceneObj->getTypeMask() & PhysicalZoneObjectType))
+		{
+			SceneObject* playerObject = PhysicsUserData::getObject(mMe->getUserPointer());
+			PhysicalZone* pZone = static_cast<PhysicalZone*>(sceneObj);
+			if (pZone->isActive() && pZone->isInvisibleWall(playerObject))
+				return true;
+		}
+		
+		if ( !colObj->hasContactResponse() )
+			return false;
+		//.logicking <<
       return Parent::needsCollision( proxy0 );
    }
 
@@ -268,8 +285,9 @@ public:
 	   if ( mFabs( dotN ) < 0.1f )
          return 1.0f;
 
-      if ( convexResult.m_hitCollisionObject->getCollisionFlags() & btCollisionObject::CF_NO_CONTACT_RESPONSE )
-         return 1.0f;
+      //.logicking (commented - sometimes we need to collide with NO_CONTACT_RESPONSE, i.e. invisible walls)
+      //if ( convexResult.m_hitCollisionObject->getCollisionFlags() & btCollisionObject::CF_NO_CONTACT_RESPONSE )
+      //   return 1.0f;
 
 	   return Parent::addSingleResult( convexResult, normalInWorldSpace );
    }
@@ -434,8 +452,12 @@ void BtPlayer::findContact(   SceneObject **contactObject,
       if ( other == mGhostObject )
          other = (btCollisionObject*)pair.m_pProxy1->m_clientObject;
 
-      AssertFatal( !outOverlapObjects->contains( PhysicsUserData::getObject( other->getUserPointer() ) ),
-         "Got multiple pairs of the same object!" );
+	  //.logicking >>
+	  if (outOverlapObjects->contains( PhysicsUserData::getObject( other->getUserPointer() ) ))
+		  continue;
+      //AssertFatal( !outOverlapObjects->contains( PhysicsUserData::getObject( other->getUserPointer() ) ),
+      //   "Got multiple pairs of the same object!" );
+	  //.logicking <<
       outOverlapObjects->push_back( PhysicsUserData::getObject( other->getUserPointer() ) );
 
       if ( other->getCollisionFlags() & btCollisionObject::CF_NO_CONTACT_RESPONSE )
@@ -496,6 +518,9 @@ void BtPlayer::setTransform( const MatrixF &transform )
    xfm.getOrigin()[2] += mOriginOffset;
 
    mGhostObject->setWorldTransform( xfm );
+   //.logicking  >> update aabb immediately as object updates may be performed before physics tick
+   mWorld->getDynamicsWorld()->updateSingleAabb(mGhostObject);
+   //.logicking  <<
 }
 
 MatrixF& BtPlayer::getTransform( MatrixF *outMatrix )

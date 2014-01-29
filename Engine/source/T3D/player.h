@@ -668,6 +668,10 @@ protected:
    void disableHeadZCalc() { mUseHeadZCalc = false; }
    void enableHeadZCalc() { mUseHeadZCalc = true; }
 
+   //.logicking
+   // for AI to handle obstacle avoidance
+   virtual void wallAvoindance(const VectorF& wallNormal) {}
+
 public:
    DECLARE_CONOBJECT(Player);
 

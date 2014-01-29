@@ -3910,6 +3910,13 @@ DefineEngineMethod( ShapeBase, setThreadPosition, bool, ( S32 slot, F32 pos ),,
    return false;
 }
 
+/*//.logicking >>
+ConsoleMethod( ShapeBase, setThreadPosition, bool, 4, 4, "( int pSlot, float pos )" )
+{
+	return object->setThreadPosition( dAtoi( argv[2] ), dAtof( argv[3] ) );
+}
+//.logicking <<*/
+
 DefineEngineMethod( ShapeBase, stopThread, bool, ( S32 slot ),,
    "@brief Stop an animation thread.\n\n"
 

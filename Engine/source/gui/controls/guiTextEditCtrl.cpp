@@ -448,6 +448,7 @@ void GuiTextEditCtrl::onMouseUp(const GuiEvent &event)
    mDragHit = false;
    mScrollDir = 0;
    mouseUnlock();
+   onChangeCursorPos(); //.logicking
 }
 
 void GuiTextEditCtrl::saveUndoState()
@@ -929,7 +930,7 @@ bool GuiTextEditCtrl::onKeyDown(const GuiEvent &event)
             mBlockEnd   = 0;
 
             execConsoleCallback();
-
+            onChangeCursorPos(); //.logicking
             return true;
          default:
             break;
@@ -1644,6 +1645,27 @@ S32 GuiTextEditCtrl::findNextWord()
    return mTextBuffer.length();
 }
 
+//.logicking >>
+void GuiTextEditCtrl::onChangeCursorPos()
+{	
+	if( isMethod("onChangeCursorPos"))
+		Con::executef(this, "onChangeCursorPos", Con::getIntArg(mCursorPos));	
+}
+
+void GuiTextEditCtrl::selectText(S32 blockStart, S32 blockEnd)
+{
+	blockStart = blockStart < 0 ? 0 : blockStart;
+	blockEnd = blockEnd > mTextBuffer.length() ? mTextBuffer.length() : blockEnd;
+	mBlockStart = blockStart;
+	mBlockEnd = blockEnd;
+}
+
+ConsoleMethod( GuiTextEditCtrl, selectText, void, 4, 4, "textEditCtrl.selectText( %startBlock, %endBlock )" )
+{
+	object->selectText(dAtoi(argv[2]), dAtoi(argv[3]));
+}
+
+//.logicking <<
 DefineEngineMethod( GuiTextEditCtrl, getText, const char*, (),,
    "@brief Acquires the current text displayed in this control.\n\n"
    "@tsexample\n"

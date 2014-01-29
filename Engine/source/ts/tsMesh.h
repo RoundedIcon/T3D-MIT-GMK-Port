@@ -111,6 +111,9 @@ class TSMesh
    F32 mRadius;
    F32 mVisibility;
    bool mDynamic;
+   //.logicking >>
+   bool mManualDynamic;
+   //.logicking <<
 
    const GFXVertexFormat *mVertexFormat;
 
@@ -146,6 +149,11 @@ class TSMesh
    U32 getFlags( U32 flag = 0xFFFFFFFF ) const { return meshType & flag; }
 
    const Point3F* getNormals( S32 firstVert );
+   //.logicking >>
+   void setManualDynamic(bool flg){mManualDynamic = flg;};
+   void createVBIB(TSVertexBufferHandle &vb);
+   int getVertexStride();
+   //.logicking <<
 
    S32 parentMesh; ///< index into shapes mesh list
    S32 numFrames;

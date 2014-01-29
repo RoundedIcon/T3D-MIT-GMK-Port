@@ -766,6 +766,12 @@ bool ParticleEmitter::onAdd()
    {
       cleanup->addObject( this );
    }
+   else
+   {
+      //.logicking made it warning instead of error, because otherwise we can't
+      //save/load player characters.
+      AssertWarn( false, "Error, could not find ClientMissionCleanup group" );
+   }
 
    removeFromProcessList();
 

@@ -123,6 +123,14 @@ PathCamera::PathCamera()
    mTarget = 0;
    mTargetSet = false;
 
+   //.logicking >>
+   mLookDirMat.identity();
+   mLookDirVector.set(0.f, 0.f, 0.f);
+   mAimOffset.set(0.f, 0.f, 0.f);
+   mAimTarget = -1;	
+   mUseLookDirMatrix = false;
+   mNetFlags.set( Ghostable | ScopeAlways );
+   //.logicking <<
    MatrixF mat(1);
    mat.setPosition(Point3F(0,0,700));
    Parent::setTransform(mat);
@@ -219,6 +227,8 @@ void PathCamera::processTick(const Move* move)
    // Move to new time
    advancePosition(TickMs);
 
+   //.logicking
+   if(mState == Pause) return;
    // Set new position
    MatrixF mat;
    interpolateMat(mPosition,&mat);
@@ -230,6 +240,8 @@ void PathCamera::processTick(const Move* move)
 void PathCamera::interpolateTick(F32 dt)
 {
    Parent::interpolateTick(dt);
+   //.logicking
+   if(mState == Pause) return;
    MatrixF mat;
    interpolateMat(delta.time + (delta.timeVec * dt),&mat);
    Parent::setRenderTransform(mat);
@@ -241,11 +253,22 @@ void PathCamera::interpolateMat(F32 pos,MatrixF* mat)
    mSpline.value(pos - mNodeBase,&knot);
    knot.mRotation.setMatrix(mat);
    mat->setPosition(knot.mPosition);
+   //.logicking >>
+   calculateAim(knot.mPosition);
+   if(mUseLookDirMatrix)
+   {
+	   for(int i = 0; i < 3; i++)
+		   mat->setColumn(i, mLookDirMat.getColumn4F(i));
+	   return;
+   }
+   //.logicking <<
 }
 
 void PathCamera::advancePosition(S32 ms)
 {
    delta.timeVec = mPosition;
+   //.logicking
+   if(mState == Pause) return;
 
    // Advance according to current speed
    if (mState == Forward) {
@@ -339,12 +362,20 @@ void PathCamera::reset(F32 speed)
    mSpline.removeAll();
    mSpline.push_back(knot);
 
+   //.logicking >>
+   mLookDirMat.identity();
+   mLookDirVector.set(0.f, 0.f, 0.f);
+   mAimOffset.set(0.f, 0.f, 0.f);
+   mAimTarget = -1;	
+   mUseLookDirMatrix = false;
+   //.logicking <<
    mNodeBase = 0;
    mNodeCount = 1;
    mPosition = 0;
    mTargetSet = false;
    mState = Forward;
-   setMaskBits(StateMask | PositionMask | WindowMask | TargetMask);
+   setMaskBits(StateMask | PositionMask | WindowMask | TargetMask |
+		AimOffsetMask | AimTargetIdMask | LookDirVectorMask | UseLookDirMatrixMask); //.logicking
 }
 
 void PathCamera::pushBack(CameraSpline::Knot *knot)
@@ -410,6 +441,10 @@ void PathCamera::onNode(S32 node)
    if (!isGhost())
 		onNode_callback(Con::getIntArg(node));
    
+   //.logicking >> we need to call onNode on datablock PathCameraData class, not on PathCamera
+   if (!isGhost())
+	   Con::executef(mDataBlock, "onNode", getIdString(), Con::getIntArg(node));
+   //.logicking <<
 }
 
 U32 PathCamera::packUpdate(NetConnection *con, U32 mask, BitStream *stream)
@@ -439,6 +474,22 @@ U32 PathCamera::packUpdate(NetConnection *con, U32 mask, BitStream *stream)
       }
    }
 
+   //.logicking >>
+   if (stream->writeFlag(mask & UseLookDirMatrixMask))
+	   stream->writeFlag(mUseLookDirMatrix);
+
+   if(mUseLookDirMatrix)
+   {
+	   if (stream->writeFlag(mask & LookDirVectorMask))
+		   mathWrite(*stream, mLookDirVector);
+
+	   if (stream->writeFlag(mask & AimOffsetMask))
+		   mathWrite(*stream, mAimOffset);
+
+	   if (stream->writeFlag(mask & AimTargetIdMask))
+		   stream->write(mAimTarget);   
+   }  
+   //.logicking <<
    // The rest of the data is part of the control object packet update.
    // If we're controlled by this client, we don't need to send it.
    if(stream->writeFlag(getControllingClient() == con && !(mask & InitialUpdateMask)))
@@ -488,6 +539,24 @@ void PathCamera::unpackUpdate(NetConnection *con, BitStream *stream)
          mSpline.push_back(knot);
       }
    }
+   //.logicking >>
+   if (stream->readFlag())
+   {
+	   mUseLookDirMatrix = stream->readFlag();
+   }
+
+   if(mUseLookDirMatrix)
+   {
+	   if (stream->readFlag()) 
+		   mathRead(*stream, &mLookDirVector);
+
+	   if (stream->readFlag()) 
+		   mathRead(*stream, &mAimOffset);
+
+	   if (stream->readFlag()) 
+		   stream->read(&mAimTarget);
+   }      
+   //.logicking <<
 
    // Controlled by the client?
    if (stream->readFlag())
@@ -495,6 +564,75 @@ void PathCamera::unpackUpdate(NetConnection *con, BitStream *stream)
 
 }
 
+//.logicking >>
+void PathCamera::setLookDir(Point3F dir)
+{
+	if(dir == Point3F(0.f, 0.f, 0.f))
+	{
+		mLookDirVector = dir;	
+		setMaskBits(LookDirVectorMask);
+	}
+	else
+	{
+		dir.normalize();	
+		mLookDirVector = dir;	
+		calculateLookDirMat(mLookDirVector);
+		setMaskBits(LookDirVectorMask);
+	}	
+}
+
+void PathCamera::setAim(SimObjectId id, Point3F offset)
+{
+	mAimTarget = id;
+	mAimOffset = offset;
+	setMaskBits(AimOffsetMask | AimTargetIdMask);
+}
+
+void PathCamera::calculateAim(Point3F currentPosition)
+{
+	if(mAimTarget == -1 && mAimOffset == Point3F(0.f, 0.f, 0.f))	
+	{
+		calculateLookDirMat(mLookDirVector);
+		return;
+	}
+
+	Point3F dir = mAimOffset;
+
+	if(mAimTarget > 0)
+	{	
+		SceneObject* obj = NULL;
+		Sim::findObject(mAimTarget, obj);
+		if(obj)
+			dir += obj->getPosition();
+	}
+
+	dir = dir - currentPosition;
+	dir.normalize();
+	calculateLookDirMat(dir);
+}
+
+void PathCamera::calculateLookDirMat(Point3F dir)
+{
+	mLookDirMat.identity();
+
+	if(dir == Point3F(0.f, 0.f, 0.f))
+	{
+		mUseLookDirMatrix = false;
+		return;
+	}
+
+	Point3F left = mCross(dir, Point3F(0.f, 0.f, 1.f));
+	left.normalize();
+	Point3F up = mCross(left, dir);
+	up.normalize();
+
+	mLookDirMat.setColumn(0, Point4F(left.x, left.y, left.z, 0.f));			
+	mLookDirMat.setColumn(1, Point4F(dir.x, dir.y, dir.z, 0.f));	
+	mLookDirMat.setColumn(2, Point4F(up.x, up.y, up.z, 0.f));		
+
+	mUseLookDirMatrix = true;	
+}
+//.logicking <<
 
 //-----------------------------------------------------------------------------
 // Console access methods
@@ -638,3 +776,33 @@ DefineEngineMethod(PathCamera, popFront, void, (),, "Removes the knot at the fro
 {
    object->popFront();
 }
+//.logicking >>
+ConsoleMethod(PathCamera,pause,void,2, 2,"pause in move")
+{
+	object->setState(PathCamera::Pause);
+}
+
+ConsoleMethod(PathCamera,resume,void,2, 2,"resume moving")
+{
+	object->setState(PathCamera::Forward);
+}
+
+ConsoleMethod(PathCamera,setLookDir,void,3, 3,"resume moving")
+{
+	Point3F dir;
+	dSscanf(argv[2], "%g %g %g", &dir.x, &dir.y, &dir.z);
+	object->setLookDir(dir);
+}
+ConsoleMethod(PathCamera,setAim,void,4, 4,"resume moving")
+{
+	Point3F offset(0.f, 0.f, 0.f);
+	if(argc > 3)
+		dSscanf(argv[3], "%g %g %g", &offset.x, &offset.y, &offset.z);
+	SimObjectId id = -1;
+	SceneObject* obj = NULL;
+	Sim::findObject(argv[2], obj); 	
+	if(obj)
+		id = obj->getId();
+	object->setAim(id, offset);
+}
+//.logicking <<

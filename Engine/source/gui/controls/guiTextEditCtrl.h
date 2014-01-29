@@ -123,6 +123,9 @@ public:
    void selectAllText();
    void clearSelectedText();
 
+   //.logicking >>
+   void selectText(S32 blockStart, S32 blockEnd);
+   //.logicking <<
    void forceValidateText();
    const char *getScriptValue();
    void setScriptValue(const char *value);
@@ -139,6 +142,7 @@ public:
    void onPaste();
    void onUndo();
 
+   void onChangeCursorPos(); //.logicking
    virtual void setFirstResponder();
    virtual void onLoseFirstResponder();
 

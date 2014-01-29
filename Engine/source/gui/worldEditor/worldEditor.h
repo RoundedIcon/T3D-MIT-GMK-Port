@@ -194,6 +194,9 @@ class WorldEditor : public EditTSCtrl
       void renderMousePopupInfo();
       void renderScreenObj( SceneObject * obj, const Point3F& sPos, const Point3F& wPos );
 
+	  //.logicking >>
+	  void renderLinks(SceneObject * obj);
+	  //.logicking <<
       void renderPaths(SimObject *obj);
       void renderSplinePath(SimPath::Path *path);
 
@@ -333,6 +336,15 @@ class WorldEditor : public EditTSCtrl
       ColorI            mDragRectColor;
       bool              mRenderObjText;
       bool              mRenderObjHandle;
+	  //.logicking >>
+	  bool				mShowIcons;
+	  bool				mGameMechanicsMode;
+	  HashTable<StringTableEntry, GFXTexHandle>	mIconsCache;
+	  SceneObject *		mHighLightedObject;
+	  void				invalidateCentroid();
+	  void				highlightObject(const char* obj);
+	  void				clearHighlighting();
+	  //.logicking <<
       StringTableEntry  mObjTextFormat;
       ColorI            mFaceSelectColor;
       bool              mRenderSelectionBox;

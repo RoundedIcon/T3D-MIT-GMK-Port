@@ -57,6 +57,9 @@ addEngineSrcDir('T3D/decal');
 addEngineSrcDir('T3D/sfx');
 addEngineSrcDir('T3D/gameBase');
 addEngineSrcDir('T3D/turret');
+addEngineSrcDir('T3D/logickingMechanics');
+addEngineSrcDir('T3D/logickingMechanics/physics');
+addEngineSrcDir('T3D/logickingMechanics/physics/bullet');
 
 global $TORQUE_HIFI_NET;
 global $TORQUE_EXTENDED_MOVE;

@@ -531,6 +531,9 @@ void Item::setVelocity(const VectorF& vel)
 
 void Item::applyImpulse(const Point3F&,const VectorF& vec)
 {
+	//.logicking >>
+	if(mDataBlock->mass <= 0) return;
+	//.logicking <<
    // Items ignore angular velocity
    VectorF vel;
    vel.x = vec.x / mDataBlock->mass;

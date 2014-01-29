@@ -1253,8 +1253,10 @@ void Projectile::interpolateTick(F32 delta)
 void Projectile::onCollision(const Point3F& hitPosition, const Point3F& hitNormal, SceneObject* hitObject)
 {
    // No client specific code should be placed or branched from this function
+   /*.logicking adding client physics
    if(isClientObject())
       return;
+	//*/
 
    if (hitObject != NULL && isServerObject())
    {
@@ -1332,8 +1334,11 @@ void Projectile::unpackUpdate(NetConnection* con, BitStream* stream)
          mSourceObjectSlot = stream->readRangedU32( 0, ShapeBase::MaxMountedImages - 1 );
 
          NetObject* pObject = con->resolveGhost( mSourceObjectId );
-         if ( pObject != NULL )
+		 if ( pObject != NULL ) {
             mSourceObject = dynamic_cast<ShapeBase*>( pObject );
+			//.logicking - add notify for client
+			deleteNotify( pObject );
+		 }
       }
       else
       {
