@@ -1051,3 +1051,29 @@ function gameCoreDestroyServer(%serverSession)
       }
    }
 }
+
+//.logicking
+/*
+function GameCore::spawnPlayer(%game, %this, %spawnPoint)
+{
+	if(%spawnPoint $= "")
+	  {
+		%spawnPoint = pickPlayerSpawnPoint($Game::DefaultPlayerSpawnGroups);
+	  }
+
+	GameCore::spawnPlayer1(%game,%this, %spawnPoint);
+
+	addToTeam(%this.player, $PLAYERS_TEAM);
+
+	updateGameScore(0);
+	$playerForAi = %this.player;
+	%this.player.playerControlled = true;
+}
+    
+function GameCore::loadOut(%game, %player)
+{
+    %player.setInventory(BlasterGun, 1);
+    %player.setInventory(BlasterAmmo,%player.maxInventory(BlasterAmmo));
+    %player.mountImage(GreenBlasterGunImage, 0);
+}
+*/

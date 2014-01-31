@@ -20,7 +20,7 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-new Material(Structure_wall)
+singleton Material(Structure_wall)
 {
    mapTo = "building01walls";
    diffuseMap[0] = "art/shapes/station/building01walls";
@@ -28,7 +28,7 @@ new Material(Structure_wall)
 };
 
 
-new Material(Structure_grid)
+singleton Material(Structure_grid)
 {
    mapTo = "grid";
    diffuseMap[0] = "art/shapes/station/grid";
@@ -36,7 +36,7 @@ new Material(Structure_grid)
 };
 
 
-new Material(Structure_plate)
+singleton Material(Structure_plate)
 {
    mapTo = "plate";
    diffuseMap[0] = "art/shapes/station/plate";

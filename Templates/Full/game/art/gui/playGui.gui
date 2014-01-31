@@ -24,7 +24,106 @@
       Enabled = "1";
       helpTag = "0";
       noCursor = "1";
-
+    //.logicking >>
+   new GuiCrossHairHud(crossHair) {
+      canSaveDynamicFields = "0";
+      Enabled = "1";
+      isContainer = "0";
+      Profile = "GuiDefaultProfile";
+      HorizSizing = "center";
+      VertSizing = "center";
+      Position = "496 368";
+      Extent = "32 32";
+      MinExtent = "8 8";
+      canSave = "1";
+      Visible = "1";
+      tooltipprofile = "GuiToolTipProfile";
+      hovertime = "1000";
+      bitmap = "art/gui/weaponHud/crossHair.png";
+      wrap = "0";
+      damageFillColor = "0 1 0 1";
+      damageFrameColor = "1 0.6 0 1";
+      damageRect = "50 4";
+      damageOffset = "0 10";
+   };
+   new GuiCrossHairHud(useCrossHair) {
+      canSaveDynamicFields = "0";
+      Enabled = "1";
+      isContainer = "0";
+      Profile = "GuiDefaultProfile";
+      HorizSizing = "center";
+      VertSizing = "center";
+      Position = "496 368";
+      Extent = "32 32";
+      MinExtent = "8 8";
+      canSave = "1";
+      Visible = "0";
+      tooltipprofile = "GuiToolTipProfile";
+      hovertime = "1000";
+      bitmap = "art/gui/hand.png";
+      wrap = "0";
+      damageFillColor = "0 1 0 1";
+      damageFrameColor = "1 0.6 0 1";
+      damageRect = "50 4";
+      damageOffset = "0 10";
+   };
+   new GuiHealthBarHud() {
+      canSaveDynamicFields = "0";
+      Enabled = "1";
+      isContainer = "0";
+      Profile = "GuiDefaultProfile";
+      HorizSizing = "right";
+      VertSizing = "top";
+      position = "11 329";
+      Extent = "26 138";
+      MinExtent = "8 8";
+      canSave = "1";
+      Visible = "1";
+      hovertime = "1000";
+      fillColor = "0 0 0 0.5";
+      frameColor = "0 1 0 0";
+      damageFillColor = "0.8 0 0 1";
+      pulseRate = "1000";
+      pulseThreshold = "0.5";
+      showFill = "1";
+      showFrame = "1";
+      displayEnergy = "0";
+   };
+   new GuiMLTextCtrl(GameScoreText) {
+      canSaveDynamicFields = "0";
+      Enabled = "1";
+      isContainer = "0";
+      Profile = "GameScoreTextProfile";
+      HorizSizing = "relative";
+      VertSizing = "relative";
+      position = "6 3";
+      Extent = "196 28";
+      MinExtent = "8 8";
+      canSave = "1";
+      Visible = "1";
+      hovertime = "1000";
+      lineSpacing = "2";
+      allowColorChars = "0";
+      maxChars = "-1";
+   };
+   new GuiMLTextCtrl(GameMessageText) {
+      canSaveDynamicFields = "0";
+      Enabled = "1";
+      isContainer = "0";
+      Profile = "GameScoreTextProfile";
+      HorizSizing = "center";
+      VertSizing = "top";
+      position = "6 40";
+      Extent = "300 38";
+      MinExtent = "8 8";
+      canSave = "1";
+      Visible = "0";
+      hovertime = "1000";
+      lineSpacing = "2";
+      allowColorChars = "1";
+      maxChars = "-1";
+   };
+   //.logicking <<
    new GuiBitmapCtrl(CenterPrintDlg) {
       bitmap = "art/gui/hudfill.png";
       wrap = "0";

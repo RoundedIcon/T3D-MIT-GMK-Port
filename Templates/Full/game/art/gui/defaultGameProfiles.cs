@@ -173,3 +173,12 @@ singleton GuiControlProfile (NumericHealthProfile)
    fontSize = 32;
    fontColor = "255 255 255";
 };
+
+//.logicking
+singleton GuiControlProfile ("GameScoreTextProfile")
+{
+   opaque = false;
+   fontType = "Arial";
+   fontSize = 30;
+   fontColor = "128 240 255";
+};

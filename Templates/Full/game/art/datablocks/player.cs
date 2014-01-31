@@ -506,6 +506,8 @@ datablock PlayerData(DefaultPlayerData)
    
    throwForce = 30;
 
+   aiAvoidThis = 1;
+
    minLookAngle = "-1.4";
    maxLookAngle = "0.9";
    maxFreelookAngle = 3.0;
@@ -650,6 +652,7 @@ datablock PlayerData(DefaultPlayerData)
    //exitingWater         = ExitingWaterLightSound;
 
    observeParameters = "0.5 4.5 4.5";
+   class = "armor";
 
    cameraMinDist = "0";
    DecalData = "PlayerFootprint";
@@ -669,6 +672,11 @@ datablock PlayerData(DefaultPlayerData)
    maxInv[ProxMine] = 5;
 
    maxInv[DeployableTurret] = 5;
+
+   //.logicking >>
+   maxInv[BlasterGun] = 1;
+   maxInv[BlasterAmmo] = 10000;
+   //.logicking <<	
 
    // available skins (see materials.cs in model folder)
    availableSkins =  "base	DarkBlue	DarkGreen	LightGreen	Orange	Red	Teal	Violet	Yellow";

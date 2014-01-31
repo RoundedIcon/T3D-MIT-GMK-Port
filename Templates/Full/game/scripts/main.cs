@@ -98,7 +98,9 @@ function onStart()
    
    // Init the physics plugin.
    physicsInit();
-      
+   //physicsInit("Bullet");
+   //physicsInit( "PhysX" );
+    
    // Start up the audio system.
    sfxStartup();
 

@@ -41,3 +41,6 @@ else
 {
    echo( "Not loading server prefs.cs on Xbox360" );
 }
+if ( isFile( "./logickingMechanics/physics.cs" ) )
+   exec( "./logickingMechanics/physics.cs");
+

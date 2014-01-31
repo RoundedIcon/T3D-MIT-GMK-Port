@@ -113,6 +113,10 @@ function initClient()
    if (isFile("./config.cs"))
       exec("./config.cs");
 
+   //.logicking >>
+   //exec("~/gui/ShellGui.cs");
+   exec("./logickingMechanics/init.cs");
+   //.logicking<<
    loadMaterials();
 
    // Really shouldn't be starting the networking unless we are
@@ -158,7 +162,8 @@ function loadMainMenu()
    // Startup the client with the Main menu...
    if (isObject( MainMenuGui ))
       Canvas.setContent( MainMenuGui );
-   
+   else if (isObject( UnifiedMainMenuGui ))
+      Canvas.setContent( UnifiedMainMenuGui );
    Canvas.setCursor("DefaultCursor");
 
    // first check if we have a level file to load

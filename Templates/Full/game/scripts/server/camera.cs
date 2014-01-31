@@ -38,6 +38,9 @@ function Observer::onTrigger(%this,%obj,%trigger,%state)
          // Do something interesting.
 
       case "Corpse":
+         //.logicking
+         //gameOver(%client);
+
          // Fade out the corpse
          if (isObject(%obj.orbitObj))
          {
